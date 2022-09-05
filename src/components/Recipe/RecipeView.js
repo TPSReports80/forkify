@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useEffect } from "react";
+import { fetchData, API_URL } from "../../utils/fetchData";
 import {
   AiOutlineClockCircle,
   AiOutlineMinusCircle,
@@ -10,8 +11,20 @@ import {
 import { BiBookmark } from "react-icons/bi";
 import { BsFillBookmarkFill } from "react-icons/bs";
 import { Fraction } from "fractional";
+import { useParams } from "react-router-dom";
+import Loader from "../Loader";
 
-const RecipeView = ({ className, recipe, dispatch }) => {
+const RecipeView = ({ className, dispatch, recipe }) => {
+  const { id } = useParams();
+
+  const loadRecipe = async (id) => {
+    const data = await fetchData(`${API_URL}/${id}`);
+    const { recipe } = data.data;
+    dispatch({ type: "SET_RECIPE", payload: { ...recipe } });
+  };
+  useEffect(() => {
+    loadRecipe(id);
+  }, [id]);
   const handleServings = (e) => {
     if (
       e.target.closest("button").classList.contains("btn--decrease-servings")
@@ -26,6 +39,10 @@ const RecipeView = ({ className, recipe, dispatch }) => {
   const handleBookmark = () => {
     dispatch({ type: "TOGGLE_BOOKMARK", payload: { recipe } });
   };
+
+  if (!recipe) {
+    return <Loader />;
+  }
   return (
     <div className={className}>
       <figure className="recipe__fig">

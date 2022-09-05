@@ -1,5 +1,6 @@
 import React from "react";
 import { BsSearch } from "react-icons/bs";
+import { useNavigate } from "react-router-dom";
 import {
   HeaderContainer,
   HeaderLogo,
@@ -11,21 +12,21 @@ import {
 } from "./HeaderElements";
 import Nav from "../Nav";
 const Header = ({ dispatch, state }) => {
+  const navigate = useNavigate();
   const [query, setQuery] = React.useState("");
 
   const handleSubmit = (e) => {
     e.preventDefault();
-
-    if (query) {
-      dispatch({ type: "CHANGE_QUERY", payload: { query } });
-      setQuery("");
-    }
-    return;
+    dispatch({ type: "CHANGE_QUERY", payload: { query } });
+    setQuery("");
   };
   return (
     <HeaderContainer>
       <HeaderLogo
-        onClick={() => dispatch({ type: "CLEAR_STATE" })}
+        onClick={() => {
+          navigate("/");
+          dispatch({ type: "CLEAR_STATE" });
+        }}
         src="/images/logo.png"
       />
       <SearchForm onSubmit={(e) => handleSubmit(e)}>

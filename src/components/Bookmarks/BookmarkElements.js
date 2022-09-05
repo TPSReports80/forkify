@@ -25,6 +25,9 @@ export const BookmarkList = styled.ul`
   list-style: none;
 `;
 export const BookmarkItem = styled.li`
+  .bookmark-link {
+    text-decoration: none;
+  }
   .preview__link,
   &:link,
   &:visited {

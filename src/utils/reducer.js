@@ -1,6 +1,7 @@
+import { nanoid } from "nanoid";
+
 export const reducer = (state, action) => {
   if (action.type === "CLEAR_STATE") {
-    console.log(state);
     return {
       ...state,
       recipe: null,
@@ -19,23 +20,20 @@ export const reducer = (state, action) => {
       search: { ...state.search, results: action.payload.recipes },
     };
   }
-  if (action.type === "SET_RECIPE_ID") {
-    return { ...state, id: action.payload.id };
-  }
+
   if (action.type === "SET_RECIPE") {
-    if (state.bookmarks.some((item) => item.id === action.payload.recipe.id)) {
-      let newRecipe = { ...action.payload.recipe, isBookmarked: true };
-      return {
-        ...state,
-        recipe: newRecipe,
-      };
+    let newRecipe;
+    if (state.bookmarks.some((item) => item.id === action.payload.id)) {
+      newRecipe = { ...action.payload, isBookmarked: true };
     } else {
-      let newRecipe = { ...action.payload.recipe, isBookmarked: false };
-      return {
-        ...state,
-        recipe: newRecipe,
-      };
+      newRecipe = { ...action.payload, isBookmarked: false };
     }
+    return {
+      ...state,
+      id: action.payload.id,
+      loading: false,
+      recipe: newRecipe,
+    };
   }
   if (action.type === "PREV_PAGE") {
     return {
@@ -91,13 +89,11 @@ export const reducer = (state, action) => {
       ...state.recipe,
       isBookmarked: action.payload.recipe.isBookmarked,
     };
-    if (action.payload.recipe.isBookmarked) {
+    if (newRecipe.isBookmarked) {
       console.log(" add into array");
-      const newArray = [
-        ...JSON.parse(localStorage.getItem("bookmarks")),
-        newRecipe,
-      ];
 
+      const newArray = [...state.bookmarks, newRecipe];
+      localStorage.setItem("bookmarks", JSON.stringify(newArray));
       return {
         ...state,
         recipe: newRecipe,
@@ -112,7 +108,7 @@ export const reducer = (state, action) => {
       const newArray = state.bookmarks.filter((item) => {
         return item.id !== action.payload.recipe.id;
       });
-      console.log(newArray);
+      localStorage.setItem("bookmarks", JSON.stringify(newArray));
       return {
         ...state,
         recipe: newRecipe,
@@ -128,7 +124,7 @@ export const reducer = (state, action) => {
   }
 
   if (action.type === "SEND_RECIPE") {
-    console.log("inside Send Recipe");
+    console.log(action.payload);
 
     const ingredients = Object.entries(action.payload)
       .filter((entry) => entry[0].startsWith("ingredient") && entry[1] !== "")
@@ -137,7 +133,7 @@ export const reducer = (state, action) => {
         // const ingArr = ing[1].replaceAll(' ', '').split(',');
         if (ingArr.length !== 3)
           throw new Error(
-            "Wrong ingredient fromat! Please use the correct format :)"
+            "Wrong ingredient format! Please use the correct format :)"
           );
 
         const [quantity, unit, description] = ingArr;
@@ -152,23 +148,28 @@ export const reducer = (state, action) => {
       cooking_time: +action.payload.cookingTime,
       servings: +action.payload.servings,
       ingredients,
+      id: nanoid(),
     };
-
+    fetch(
+      "https://forkify-api.herokuapp.com/api/v2/recipes?key=e713fb07-d9bf-440f-8fc0-a6a7f5d9df94",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(recipe),
+      }
+    )
+      .then((res) => res.json())
+      .then((data) => console.log(data));
     return {
       ...state,
-      addRecipe: true,
+      recipe,
+      id: recipe.id,
+      showForm: !state.showForm,
       recipeForm: recipe,
     };
   }
-  if (action.type === "ADD_RECIPE") {
-    console.log("inside Add Recipe");
-    console.log(action.payload);
-    return {
-      ...state,
-      addRecipe: false,
-      showForm: false,
-      recipe: action.payload,
-    };
-  }
+
   return state;
 };

@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import Pagination from "../Pagination/Pagination";
-import SearchResultsItem from "./SearchResultsItem";
+
 export const SearchResultsContainer = styled.div`
   padding: 3rem 0;
   display: flex;
@@ -11,6 +11,9 @@ export const SearchResultsList = styled.ul`
   margin-bottom: 2rem;
 `;
 export const SearchRecipeItem = styled.li`
+  .recipe-preview-link {
+    text-decoration: none;
+  }
   .preview__link,
   &:link,
   &:visited {

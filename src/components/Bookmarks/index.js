@@ -1,5 +1,6 @@
 import React from "react";
 import { BsExclamationTriangle } from "react-icons/bs";
+import useLocalStorage from "../../utils/useLocalStorage";
 import {
   BookmarkContainer,
   BookmarkList,
@@ -7,11 +8,9 @@ import {
   MessageText,
   BookmarkItem,
 } from "./BookmarkElements";
+import { Link } from "react-router-dom";
+
 const Bookmarks = ({ state }) => {
-  React.useEffect(() => {
-    console.log("bookmarked");
-    localStorage.setItem("bookmarks", JSON.stringify(state.bookmarks));
-  }, [state.bookmarks]);
   if (state.bookmarks.length > 0) {
     return (
       <BookmarkContainer className="bookmark-container">
@@ -19,15 +18,17 @@ const Bookmarks = ({ state }) => {
           {state.bookmarks.map((item) => {
             return (
               <BookmarkItem key={item.id}>
-                <div className="preview__link">
-                  <figure className="preview__fig">
-                    <img src={item.image_url} alt={item.title} />
-                  </figure>
-                  <div className="preview__data">
-                    <h4 className="preview__name">{item.title}</h4>
-                    <p className="preview__author">{item.publisher}</p>
+                <Link className="bookmark-link" to={`/recipe/${item.id}`}>
+                  <div className="preview__link">
+                    <figure className="preview__fig">
+                      <img src={item.image_url} alt={item.title} />
+                    </figure>
+                    <div className="preview__data">
+                      <h4 className="preview__name">{item.title}</h4>
+                      <p className="preview__author">{item.publisher}</p>
+                    </div>
                   </div>
-                </div>
+                </Link>
               </BookmarkItem>
             );
           })}

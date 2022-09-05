@@ -4,12 +4,6 @@ export const RecipeContainer = styled.div`
   background-color: var(--color-grey-light-1);
 `;
 
-export const Message = styled.div``;
-
-export const MessageText = styled.p``;
-
-export const IconHolder = styled.div``;
-
 export const RecipeViewStyled = styled(RecipeView)`
   svg {
   }
