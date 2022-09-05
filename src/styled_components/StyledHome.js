@@ -2,7 +2,7 @@ import styled from "styled-components";
 
 export const MainContainer = styled.div`
   .message {
-    margin: 40px 0 0;
+    margin: 40px 0 0 !important;
   }
 `;
 
